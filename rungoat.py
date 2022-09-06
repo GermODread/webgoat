@@ -35,12 +35,11 @@ def main():
         checkgoat()
     except KeyboardInterrupt:
         print("Keyboard Interrupt detected")
-        proc = subprocess.Popen(f"docker ps --filter ancestor={goatwolf}", shell=True, stdout=subprocess.PIPE, text=True)
+        cmd = f"docker ps --filter ancestor={goatwolf}| grep -o "'"\w*$"'" | grep -v "'"NAMES"'""
+        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, text=True)
         output = proc.stdout.read()
-        print(f"{output}")
-        print("Run: docker stop %CONTAINER_NAME")
-        inputs = input("Enter name to stop Webgoat container : ")
-        subprocess.run(f"docker stop {inputs}", shell=True)
+        print(f"Stopping {output}")
+        subprocess.run(f"docker stop {output}", shell=True)
 
 
 if __name__ == "__main__":
