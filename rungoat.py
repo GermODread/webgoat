@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 import subprocess, shlex
+import webbrowser
 
 hoste="127.0.0.1"
 port1="8080"
 port2="9090"
+
+goatwolf = "webgoat/goatandwolf"
 
 def checkgoat():
     proc = subprocess.Popen("docker images", shell=True, stdout=subprocess.PIPE, text=True)
@@ -11,7 +14,7 @@ def checkgoat():
     cmd_line = shlex.split(output)
 
     for lin in cmd_line:
-        if lin == "webgoat/goatandwolf":
+        if lin == goatwolf:
             print("Repo found")
             rungoat()
             break
@@ -22,19 +25,19 @@ def checkgoat():
 
 
 def pullgoat():
-    subprocess.run("docker pull webgoat/goatandwolf", shell=True, text=True)
+    subprocess.run(f"docker pull {goatwolf}", shell=True, text=True)
 
 def rungoat():
-    subprocess.run(f"docker run -p {hoste}:{port1}:{port1} -p {hoste}:{port2}:{port2} -e TZ=Europe/Amsterdam webgoat/goatandwolf", shell=True)
+    subprocess.run(f"docker run -p {hoste}:{port1}:{port1} -p {hoste}:{port2}:{port2} -e TZ=Europe/Amsterdam {goatwolf}", shell=True)
 
 def main():
     try:
         checkgoat()
     except KeyboardInterrupt:
-        proc = subprocess.Popen("docker ps", shell=True, stdout=subprocess.PIPE, text=True)
-        output = proc.stdout.read()
         print("Keyboard Interrupt detected")
-        print(output)
+        proc = subprocess.Popen(f"docker ps --filter ancestor={goatwolf}", shell=True, stdout=subprocess.PIPE, text=True)
+        output = proc.stdout.read()
+        print(f"{output}")
         print("Run: docker stop %CONTAINER_NAME")
         inputs = input("Enter name to stop Webgoat container : ")
         subprocess.run(f"docker stop {inputs}", shell=True)
