@@ -39,8 +39,7 @@ def main():
         proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, text=True)
         output = proc.stdout.read()
         print(f"Stopping {output}")
-        subprocess.run(f"docker stop {output}", shell=True)
-
+        subprocess.run(str(f"docker stop str({output})"), shell=True)
 
 if __name__ == "__main__":
     main()
